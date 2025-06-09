@@ -6,6 +6,17 @@
 #define SD_CS_PIN 16 // Chip select pin for SD card
 #define LED_PIN    0
 
+int playback_speed_bpm = 120; // Playback speed in beats per minute
+/*
+char* tune_list[] = {
+    "6LEDS.MID", // Simple and short file
+    NULL // End of list
+};
+
+*/
+
+int choosen_tune = 0; // Index of the currently chosen tune
+
 LedStrip strip(LED_PIN); // Create a LedStrip object with 61 LEDs (5 octaves + 1 for the highest note)
 
 SdFat	SD;

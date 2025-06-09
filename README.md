@@ -1,5 +1,7 @@
-# Keyboard LED's
-
+# LEKeys
+LEKeys or "LED Keys" is a little project that is supposed to help me with learning the piano.
+It illuminates the key that has to be played next, with the ability to adjust the playback speed and mark certain sections that i want to practice.
+![alt text](docs/images/logo_white.png)
 ## Hardware
 -Wemo D1 Mini
 - WS2812B LED strip

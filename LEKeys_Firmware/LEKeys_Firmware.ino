@@ -3,7 +3,7 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define SD_CS_PIN 16 // Chip select pin for SD card
+#define SD_CS_PIN 15 // Chip select pin for SD card
 #define LED_PIN    0
 
 int playback_speed_bpm = 120; // Playback speed in beats per minute
@@ -16,6 +16,33 @@ char* tune_list[] = {
 */
 
 int choosen_tune = 0; // Index of the currently chosen tune
+
+// OLED Dsiplay
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET    -1 // Reset pin not used
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#include "user_interface.h"
+
+UserInterface ui(&display, &playback_speed_bpm);
+
+#include <CtrlEnc.h>
+// Forward declarations for encoder callbacks
+void encoderTurnLeft();
+void encoderTurnRight();
+
+CtrlEnc encoder(2, 16, encoderTurnLeft, encoderTurnRight); // Encoder on pins 2 and 16
+
+// Callback implementations that call the ui methods
+void encoderTurnLeft() {
+    ui.onTurnLeft();
+}
+void encoderTurnRight() {
+    ui.onTurnRight();
+}
 
 LedStrip strip(LED_PIN); // Create a LedStrip object with 61 LEDs (5 octaves + 1 for the highest note)
 
@@ -62,8 +89,10 @@ void setup() {
     strip.setMainColor(strip.Color(0, 0, 255)); // Set main color to white
     strip.setForeshadowColor(strip.Color(127, 0, 0)); // Set foreshadow color to dim white
 
+    ui.begin(); // Initialize the user interface
+    
     #define SPI_SPEED SD_SCK_MHZ(4) //Does not work without that
-    if (!SD.begin(16, SPI_SPEED))
+    if (!SD.begin(SD_CS_PIN, SPI_SPEED))
     {
         Serial.println("\nSD init fail!");
         while (true) ;
@@ -99,10 +128,13 @@ void loop() {
     }
 
       // play the file
-  if (!SMF.isEOF())
+  /*if (!SMF.isEOF())
   {
     SMF.getNextEvent();
-  }
+  }*/
+ ui.update(); // Update the user interface
+  encoder.process(); // Update the encoder state
+  //ui.update(); // Update the user interface
 }
 
 /*void get_chord_from_serial() {

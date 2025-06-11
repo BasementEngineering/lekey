@@ -38,6 +38,13 @@ Control actions:
 - Change MIDI Song: Double Press Encoder Button
 - Rewind and Forward: Rotate Encoder while pressing button
 
+Section practice:
+1. Set start with encoder, press to lock
+2. Set end with encoder, press to lock
+3. Press loop [loop, loop section, no looping]
+
+(Settings for loop section should be saved to SD card, editable via PC)
+
 ## Aquiring MIDI Songs
 - Use a MIDI Editor to create your own MIDI Songs
 - Use a mp3 to MIDI converter e.g. [Transkun](https://github.com/Yujia-Yan/Transkun/tree/main)

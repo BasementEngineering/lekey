@@ -1,9 +1,5 @@
 #pragma once
 
-#include <functional>
-#include <stdint.h>
-#include <chrono>
-
 #include <Adafruit_SSD1306.h>
 
 #include <CtrlEnc.h>
@@ -12,9 +8,6 @@
 // UserInterface class definition
 class UserInterface {
 public:
-    // Callback types
-    using Callback = std::function<void()>;
-
     // Constructor
     UserInterface(Adafruit_SSD1306* display,
                   int* bpm//,
@@ -85,10 +78,6 @@ private:
     CtrlEnc* encoder_;
     int* bpm_;
 
-    // Callbacks
-    Callback playCallback_;
-    Callback pauseCallback_;
-
     // State
     State state_;
     Screen currentScreen_;
@@ -148,14 +137,6 @@ private:
 
     void forward() {
         currentTimeMs_ += 1000;
-    }
-
-    // Dummy millis() implementation for header-only
-    static uint32_t millis() {
-        using namespace std::chrono;
-        static auto start = steady_clock::now();
-        auto now = steady_clock::now();
-        return (uint32_t)duration_cast<milliseconds>(now - start).count();
     }
 };
 

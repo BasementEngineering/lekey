@@ -3,8 +3,16 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define SD_CS_PIN 15 // Chip select pin for SD card
-#define LED_PIN    0
+/***** PIN DEFINITIONS ********/
+ /* MicroSD SPI Pins
+ * MicroSD MISO pin to Pico GPIO-12
+ * MicroSD MOSI pin to Pico GPIO-11
+ * MicroSD SCK pin to Pico GPIO-10
+ * MicroSD CS pin to Pico GPIO-13
+ */
+
+#define SD_CS_PIN 10 // Chip select pin for SD card
+#define LED_PIN    4
 
 int playback_speed_bpm = 120; // Playback speed in beats per minute
 /*
@@ -34,7 +42,7 @@ UserInterface ui(&display, &playback_speed_bpm);
 void encoderTurnLeft();
 void encoderTurnRight();
 
-CtrlEnc encoder(2, 16, encoderTurnLeft, encoderTurnRight); // Encoder on pins 2 and 16
+CtrlEnc encoder(2, 3, encoderTurnLeft, encoderTurnRight); // Encoder on pins 2 and 16
 
 // Callback implementations that call the ui methods
 void encoderTurnLeft() {

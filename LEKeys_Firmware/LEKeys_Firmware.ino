@@ -1,7 +1,8 @@
-#include "leds.h"
-
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
+
+#include "led_output.h"
+#include "pins.h"
 
 /***** PIN DEFINITIONS ********/
  /* MicroSD SPI Pins
@@ -10,9 +11,6 @@
  * MicroSD SCK pin to Pico GPIO-10
  * MicroSD CS pin to Pico GPIO-13
  */
-
-#define SD_CS_PIN 10 // Chip select pin for SD card
-#define LED_PIN    4
 
 int playback_speed_bpm = 120; // Playback speed in beats per minute
 /*
@@ -42,7 +40,7 @@ UserInterface ui(&display, &playback_speed_bpm);
 void encoderTurnLeft();
 void encoderTurnRight();
 
-CtrlEnc encoder(2, 3, encoderTurnLeft, encoderTurnRight); // Encoder on pins 2 and 16
+CtrlEnc encoder(14, 15, encoderTurnLeft, encoderTurnRight); // Encoder on pins 2 and 16
 
 // Callback implementations that call the ui methods
 void encoderTurnLeft() {
@@ -60,7 +58,7 @@ MD_MIDIFile SMF;
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
 // list will be opened (skips errors).
-const char *loopfile = "6LEDS.MID";  // simple and short file
+const char *loopfile = "LeiseRieseltDerSchnee.mid";  // simple and short file
 
 void midiCallback(midi_event *pev) {
     Serial.print("MIDI Event: ");
@@ -93,7 +91,9 @@ void midiCallback(midi_event *pev) {
 void setup() {
     Serial.begin(9600);
     Serial.println("Starting Keyboard");
+    delay(1000);
     strip.begin(); // Initialize the LED strip
+    strip.runTestSequence();
     strip.setMainColor(strip.Color(0, 0, 255)); // Set main color to white
     strip.setForeshadowColor(strip.Color(127, 0, 0)); // Set foreshadow color to dim white
 
@@ -128,6 +128,8 @@ unsigned long last_tick = 0;
 
 unsigned long current_tick = 0;
 
+int last_bpm = 0; // Last BPM value to avoid unnecessary updates
+
 void loop() {
 
     if (millis() - last_tick >= tick_length) {
@@ -136,10 +138,17 @@ void loop() {
     }
 
       // play the file
-  /*if (!SMF.isEOF())
+    if(last_bpm != playback_speed_bpm) {
+        last_bpm = playback_speed_bpm; // Update last BPM
+        tick_length = 60000 / playback_speed_bpm; // Calculate new tick length based on BPM
+        Serial.print("Tick length updated to: ");
+        Serial.println(tick_length);
+        SMF.setTempo(playback_speed_bpm); // Update the tempo in the MIDI file
+    }
+  if (!SMF.isEOF())
   {
     SMF.getNextEvent();
-  }*/
+  }
  ui.update(); // Update the user interface
   encoder.process(); // Update the encoder state
   //ui.update(); // Update the user interface

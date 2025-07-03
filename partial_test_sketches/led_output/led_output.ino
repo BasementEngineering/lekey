@@ -6,6 +6,7 @@ void setup() {
     Serial.begin(115200);
     ledstrip.begin();
 
+    ledstrip.runTestSequence(); // Run the LED test sequence
     // Test: Set foreshadow color to blue at 50%
     ledstrip.setForeshadowColor(ledstrip.Color(0, 0, 255));
     // Test: Set main color to red

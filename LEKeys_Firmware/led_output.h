@@ -75,8 +75,8 @@ private:
     
 
     uint16_t midiNoteToLedIdx(uint8_t midi_note) {
-        //Serial.print("midi_note: ");
-        //Serial.println(midi_note);
+        Serial.print("midi_note: ");
+        Serial.println(midi_note);
         const int min_keyboard_octave = 1; // Octaves start at -1
         const int max_keyboard_octave = 4; // Octaves end at 4
 
@@ -84,14 +84,14 @@ private:
         int octave = int(midi_note / 12)-1; // Get the octave (octaves start at -1)
 
         if( octave < min_keyboard_octave || octave > max_keyboard_octave ){
-            //Serial.println("Octave out of range");
+            Serial.println("Octave out of range");
             return 0; // Out of range, return first LED
         }
 
         int ledIndex = (octave - min_keyboard_octave) * 12 + note; // Map to LED index
 
-        //Serial.print("ledIndex: ");
-        //Serial.println(ledIndex);
+        Serial.print("ledIndex: ");
+        Serial.println(ledIndex);
         return ledIndex;
     }
 

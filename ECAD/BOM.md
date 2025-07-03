@@ -1,0 +1,8 @@
+| Component         | Description                | Type/Part Number | Count | Link                                      | Current Price (USD) |
+|-------------------|---------------------------|------------------|-------|-------------------------------------------|---------------------|
+| Microcontroller   | Main control unit          | Raspberry Pi Pico | 1     | [Reichelt](https://www.reichelt.de/de/de/shop/produkt/raspberry_pi_pico_rp2040_cortex-m0_microusb_header-305824) | 4.80 €            |
+| Push Button       | Tactile switch             | B3F-1000         | 4    | [Reichelt](hhttps://www.reichelt.de/de/de/shop/produkt/kurzhubtaster_printmontage_1_schliesser_6_x_6_x_4_3_mm-360041) | 0.33 €              |
+| Rotary Encoder    | Incremental encoder        | KY-040    | 1     | [Reichelt](https://www.reichelt.de/de/de/shop/produkt/entwicklerboards_-_drehwinkel-encoder_ky-040-282545) |  2,20 €         |
+| Display           | 0,96" OLED display              | SSD1306          | 1     | [Reichelt](https://www.reichelt.de/de/de/shop/produkt/entwicklerboards_-_display_0_96_oled-display_ssd1306-372107) | 8.85 €  |
+| SD Adapter        | MicroSD card adapter       | MicroSD Adapter  | 1     | [MicroSD Adapter](https://www.reichelt.de/de/de/shop/produkt/entwicklerboards_-_breakout-board_fuer_microsd-karten-266045) |    1,55 €         |
+| LED Strip          | ADressable RGB LEDs 60LEDs/m 5V        | WS2812B          | 1     | [WS2812B LED Strip](https://amzn.eu/d/gXoEgu9) | 27.99 € |

@@ -3,11 +3,7 @@ LEKeys or "LED Keys" is a little project that is supposed to help me with learni
 It illuminates the key that has to be played next, with the ability to adjust the playback speed and mark certain sections that i want to practice.
 ![alt text](docs/images/logo_white.png)
 ## Hardware
--Wemo D1 Mini
-- WS2812B LED strip
-- OLED display
-- 3D printed case
-- SD card reader
+The complete BOM can be found [here](ECAD/BOM.md).
 
 ## Features
 - Put MIDI Songs on micro SD card

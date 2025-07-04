@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Adafruit_SSD1306.h>
+#include "encoder_input.h"
+#include "button_input.h"
 
-#include <CtrlEnc.h>
 #define SCREEN_ADDRESS 0x3C
 
 // UserInterface class definition
@@ -10,12 +11,16 @@ class UserInterface {
 public:
     // Constructor
     UserInterface(Adafruit_SSD1306* display,
-                  int* bpm//,
+                  int* bpm,
+                  Encoder_Input* encoder,
+                  Button_Input* buttonInput
                   //Callback playCallback,
                   //Callback pauseCallback
                   )
         : display_(display),
           bpm_(bpm),
+            encoder_(encoder),
+            buttonInput_(buttonInput),
           //playCallback_(playCallback),
           //pauseCallback_(pauseCallback),
           state_(State::Paused),
@@ -49,13 +54,34 @@ public:
         }
     }
 
+    void processEncoder(int delta) {
+        *bpm_ += delta;
+        if (*bpm_ < 20) {
+            *bpm_ = 20; // Minimum BPM
+        } else if (*bpm_ > 300) {
+            *bpm_ = 300; // Maximum BPM
+        }
+    }
+
     void update(){
+        int buttonState = buttonInput_->update();
+        int encoderDelta = encoder_->read();
         switch (state_) {
             case State::Playing:
+                if (buttonState == Button_Input::SINGLE_CLICK) {
+                state_ = State::Paused;
+                //playCallback_(); // Call play callback if needed
+                } 
                 showPlayingScreen();
+                processEncoder(encoderDelta);
                 break;
             case State::Paused:
+                if (buttonState == Button_Input::SINGLE_CLICK) {
+                state_ = State::Playing;
+                //playCallback_(); // Call play callback if needed
+                } 
                 showPausedScreen();
+                processEncoder(encoderDelta);
                 break;
         }
     }
@@ -75,7 +101,8 @@ private:
 
     // Hardware
     Adafruit_SSD1306* display_;
-    CtrlEnc* encoder_;
+    Encoder_Input* encoder_;
+    Button_Input* buttonInput_;
     int* bpm_;
 
     // State

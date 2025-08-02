@@ -52,3 +52,5 @@ transkun mp3_files/wonderwall.mp3 output.mid
 However, so far, Transukun does not work. Installation via pip worked, but the program states 
 "FileNotFoundError: [WinError 2] The system cannot find the file specified"
 Although, the file is there. Entering an incorrect path throws a different error, stating the missing filename.
+This is caused by ffmpeg not being installed or not being in the PATH.
+Install ffmpeg and add it to the PATH.

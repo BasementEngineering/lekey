@@ -44,6 +44,9 @@ public:
 
     void foreshadow(uint8_t midi_note) {
         uint16_t ledIndex = midiNoteToLedIdx(midi_note);
+        if (strip.getPixelColor(ledIndex) == main_color) {
+            return; // Don't overshadow if already main_color
+        }
         uint32_t color50 = dimColor(foreshadowColor, 0.5f);
         strip.setPixelColor(ledIndex, color50);
         strip.show();
@@ -52,6 +55,12 @@ public:
     void light(uint8_t midi_note) {
         uint16_t ledIndex = midiNoteToLedIdx(midi_note);
         strip.setPixelColor(ledIndex, main_color);
+        strip.show();
+    }
+
+    void clear(uint8_t midi_note) {
+        uint16_t ledIndex = midiNoteToLedIdx(midi_note);
+        strip.setPixelColor(ledIndex, strip.Color(0, 0, 0)); // Clear the specific note
         strip.show();
     }
 

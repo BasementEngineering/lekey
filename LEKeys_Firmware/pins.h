@@ -6,6 +6,6 @@
 #define ENCODER_CLK_PIN 15 // Pin for the rotary encoder CLK
 #define ENCODER_DT_PIN 14 // Pin for the rotary encoder DT
 
-#define ENCODER_SW_PIN 13 // Pin for the rotary encoder switch
+#define ENCODER_SW_PIN 20 // Pin for the rotary encoder switch
 
 //#define SD_MISO 

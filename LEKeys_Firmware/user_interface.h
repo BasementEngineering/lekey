@@ -4,7 +4,7 @@
 #include "encoder_input.h"
 #include "button_input.h"
 
-#define SCREEN_ADDRESS 0x3C
+#define SCREEN_ADDRESS 0x3C //78//
 
 // UserInterface class definition
 class UserInterface {

@@ -1,3 +1,4 @@
 midi_files/*
 mp3_files/*
 docs/images/~$*
+docker-compose.yml

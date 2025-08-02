@@ -41,7 +41,26 @@ private:
         int clkState = digitalRead(clkPin);
         int dtState = digitalRead(dtPin);
 
-        if (clkState != lastClkState) {
+        bool clkRising = (clkState == HIGH && lastClkState == LOW);
+        bool clkFalling = (clkState == LOW && lastClkState == HIGH);
+
+        if (clkRising) {
+            if (dtState == LOW) {
+                position--;
+            } else {
+                position++;
+            }
+        } else if (clkFalling)
+        {
+            if(dtState == LOW) {
+                position++;
+            } else {
+                position--;
+            }
+        }
+
+        lastClkState = clkState;
+        /*if (clkState != lastClkState) {
             if (clkState == LOW) {
                 if (dtState != clkState) {
                     position++;
@@ -50,7 +69,7 @@ private:
                 }
             }
             lastClkState = clkState;
-        }
+        }*/
     }
 };
 

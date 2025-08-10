@@ -1,27 +1,11 @@
-#include <SdFat.h>
-#include <MD_MIDIFile.h>
+#include "my_player.h"
 
 #include "pins.h"
 
-int playback_speed_bpm = 120; // Playback speed in beats per minute
-/*
-char* tune_list[] = {
-    "6LEDS.MID", // Simple and short file
-    NULL // End of list
-};
-
-*/
-int choosen_tune = 0; // Index of the currently chosen tune
-
-SdFat	SD;
-MD_MIDIFile SMF;
-
-// The files in the tune list should be located on the SD card 
-// or an error will occur opening the file and the next in the 
-// list will be opened (skips errors).
-const char *loopfile = "LeiseRieseltDerSchnee.mid";  // simple and short file
+MyPlayer* my_player = &MyPlayer::getInstance();
 
 void midiCallback(midi_event *pev) {
+/*
     Serial.print("MIDI Event: ");
     Serial.print("Track: ");
     Serial.println(pev->track);
@@ -44,79 +28,69 @@ void midiCallback(midi_event *pev) {
     Serial.println(midi_note);
   }
   Serial.println();
+  */
 }
 
-unsigned long tick_length = 100;
-unsigned long last_tick_time = 0;
+int lastBar = 0;
+void printPlayerStatus() {
+    int currentBar = my_player->getCurrentBar();
 
-unsigned long current_tick = 0;
-unsigned long tick_duration_ms = 0;
-
-unsigned long last_tick_count = 0; 
-
-int last_bpm = 0; // Last BPM value to avoid unnecessary updates
+    if(lastBar != currentBar){
+      Serial.print("Current BPM: ");
+      Serial.println(my_player->getBpm());
+      Serial.print("Current song: ");
+      Serial.println(my_player->getChoosenSong());
+      Serial.print("Current Bar: ");
+      Serial.println(my_player->getCurrentBar());
+      Serial.println(); 
+      lastBar = currentBar;
+    }
+    
+}
 
 void setup() {
     Serial.begin(9600);
     Serial.println("Starting Player");
     delay(1000);
     
-    #define SPI_SPEED SD_SCK_MHZ(4) //Does not work without that
-    if (!SD.begin(SD_CS_PIN, SPI_SPEED))
-    {
-        Serial.println("\nSD init fail!");
-        while (true) ;
-    }
-
-    // Initialize MIDIFile
-    SMF.begin(&SD);
-    SMF.setMidiHandler(midiCallback);
-    SMF.looping(true);
-
-    int err;
-    err = SMF.load(loopfile);
-    if (err != MD_MIDIFile::E_OK)
-    {
-        Serial.println("SMF load Error ");
-    
-        while (true);
-    }
-
-    tick_duration_us = SMF.getTickTime(); // Get the tick duration in milliseconds
-    unsigned long ticks_per_quarter_note = SMF.getTicksPerQuarterNote(); // Get the ticks per quarter note
-    unsigned long tempo = SMF.getTempo(); // Get the current tempo in microseconds per quarter note
-
-    Serial.print("Tick duration: ");
-    Serial.print(tick_duration_us);
-    Serial.println(" us");
-
-    Serial.print("Ticks per quarter note: ");
-    Serial.println(ticks_per_quarter_note);
-    Serial.print("Tempo: ");
-    Serial.print(tempo);
-    Serial.println(" microseconds per quarter note");
-
-    Serial.println("Ready");
+    my_player->begin();
+    //my_player->setMidiHandler(midiCallback);
 }
 
+int counter = 0;
+unsigned long lastPlayerEventTs = 0;
+
 void loop() {
-    if (millis() - last_tick_time >= tick_length) {
-        last_tick_time = millis();
-        current_tick++;
+  //my_player->run();
+  my_player->update();
+  if( (millis() - lastPlayerEventTs) > 2000){
+    lastPlayerEventTs = millis();
+    counter++;
+    counter%=4;
+    switch(counter){
+      case 0:
+        my_player->play();
+        Serial.println("Playing MIDI file");
+        break;
+      case 1:
+        my_player->pause();
+        Serial.println("Paused MIDI file");
+        break;
+      case 2:
+        my_player->nextSong();
+        Serial.println("Next song");
+        break;
+      case 3:
+        my_player->previousSong();
+        Serial.println("Previous song");
+        break;
+      default:
+        Serial.println("Unknown action");
+        break;
     }
 
-      // play the file
-    if(last_bpm != playback_speed_bpm) {
-        last_bpm = playback_speed_bpm; // Update last BPM
-        tick_length = 60000 / playback_speed_bpm; // Calculate new tick length based on BPM
-        Serial.print("Tick length updated to: ");
-        Serial.println(tick_length);
-        SMF.setTempo(playback_speed_bpm); // Update the tempo in the MIDI file
-    }
-  if (!SMF.isEOF())
-  {
-    int tick_delta = current_tick - last_tick_count; // Calculate the delta since the last tick
-    SMF.getNextEvent();
-    last_tick_count = current_tick; // Update last tick count
+
   }
+  //printPlayerStatus();
+  
 }

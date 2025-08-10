@@ -30,6 +30,9 @@ public:
         SMF.begin(&SD);
         SMF2.begin(&SD);
         SMF.setMidiHandler(playerCallbackStatic); // Use static callback
+
+        int beats_per_bar = (SMF.getTimeSignature() >> 8) & 0xFF;
+        horizonLengthInTicks = horizonLengthInBars * beats_per_bar * SMF.getTicksPerQuarterNote(); // Set horizon length to 4 bars
     }
 
     void setNoteBuffer(uint8_t note, bool state)
@@ -347,10 +350,7 @@ private:
         Serial.println(count);
     }
 
-    // I need to look 4 bars into the future in the file to enable looping and to be able to highlight the keys one bar ahead.
-    // This is tricky to do as midi events come as a stream of events with a start and an unknown end. 
-    // To find the end of a key press you actually have to parse all the way to the key up event.
-    // A pointer to this structure type is passed to the callback function registered using setMidiHandler().
+
 /*
 typedef struct
 {
@@ -361,18 +361,27 @@ typedef struct
 } midi_event;
 */
 
+typedef struct
+{
+  uint8_t size;     ///< the number of data bytes
+  uint8_t data[4];  ///< the data. Only 'size' bytes are valid
+  uint16_t duration;
+} led_midi_event;
+
 /* 
 toickClock() in midiFile can be used to check if a tick has passed
 It will always return 0 if you are in between ticks, but as soon as a tick_time hat passed
 it will return the current tick number.
 */
 
-    midi_event event_buffer[256]; //FiFo buffer for MIDI events
+    midi_event event_buffer[1024]; //FiFo buffer for MIDI events
     int event_buffer_index = 0; // Index for the event buffer
     uint16_t lastTick = 0;
     unsigned long _lastTickError = 0; // Error in the last tick calculation
     unsigned long _lastTickCheckTime = 0; // Last time the tick was checked
 
+    int horizonLengthInTicks = -1;
+    int horizonLengthInBars = 4; // Length of the horizon in bars, used to determine how many ticks to look ahead
 };
 
 #endif // MY_PLAYER_H
